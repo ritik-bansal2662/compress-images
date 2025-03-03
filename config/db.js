@@ -13,19 +13,7 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: dbHost,
   port: dbPort,
   dialect: "mysql",
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false, // Required for some cloud-hosted DBs
-    },
-  },
   logging: false,
-  pool: {
-    max: 5, // Check if this is causing the issue
-    min: 0,
-    acquire: 30000,
-    idle: 10000,
-  },
 });
 
 sequelize.authenticate()
