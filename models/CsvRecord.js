@@ -6,7 +6,7 @@ const CsvRecord = sequelize.define("CsvRecord", {
   reqId : { type: DataTypes.STRING, allowNull: false },
   name: { type: DataTypes.STRING, allowNull: false },
   images: { type: DataTypes.TEXT, allowNull: false },
-  compressedImages: { type: DataTypes.TEXT, allowNull: false },
+  compressedImages: { type: DataTypes.TEXT, allowNull: true },
 });
 
 module.exports = CsvRecord;

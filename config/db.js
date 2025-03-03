@@ -9,11 +9,22 @@ const dbPassword = process.env.DB_PASSWORD
 console.log("db credentials: ", dbHost, dbPort, dbName, dbUser, dbPassword);
 
 
-const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
+// const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
+//   host: dbHost,
+//   port: dbPort,
+//   dialect: "mysql",
+//   logging: false,
+// });
+
+const sequelize = new Sequelize({
   host: dbHost,
   port: dbPort,
+  database: dbName, 
+  username: dbUser, 
+  password: dbPassword,
   dialect: "mysql",
   logging: false,
+  dialectModule: require('mysql2')
 });
 
 sequelize.authenticate()
