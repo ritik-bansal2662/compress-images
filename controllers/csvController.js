@@ -5,6 +5,7 @@ const sharp = require("sharp");
 const path = require("path");
 const CsvRecord = require("../models/CsvRecord");
 const ReqMaster = require("../models/RequestMaster");
+const { processImages } = require("../utils/processImages");
 
 const getRequestId = async () => {
   const id = Date.now();
@@ -18,27 +19,6 @@ const validateCsv = (data) => {
   if(data.length != 3) return false
   return true;
 }
-
-const downloadAndCompressImage = async (reqId, imageUrl, outputFolder) => {
-  try {
-    const response = await axios({
-      url: imageUrl,
-      responseType: "arraybuffer",
-    });
-    const imageBuffer = Buffer.from(response.data);
-    const imageName = reqId + path.basename(imageUrl).split("?")[0]; // Remove query params
-    const outputFilePath = path.join(outputFolder, imageName);
-    
-    await sharp(imageBuffer)
-      .resize({ width: Math.round(0.5 * 800) }) // Resize to 50%
-      .toFile(outputFilePath);
-    
-    return `/uploads/${imageName}`;
-  } catch (error) {
-    console.error("Error processing image:", imageUrl, error);
-    return null;
-  }
-};
 
 exports.uploadCSV = async (req, res) => {
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
@@ -75,25 +55,29 @@ exports.uploadCSV = async (req, res) => {
     })
     .on("end", async () => {
       try {
-        for (const record of results) {
-          const imageUrls = record.images.replaceAll(/\s/g, "").split(",").map((url) => url.trim());
-          const storedUrls = [];
+        // for (const record of results) {
+        //   const imageUrls = record.images.replaceAll(/\s/g, "").split(",").map((url) => url.trim());
+        //   const storedUrls = [];
 
-          for (const url of imageUrls) {
-            let storedUrl = (await downloadAndCompressImage(reqId, url, uploadDir));
-            if (storedUrl) storedUrls.push(process.env.SERVICE_URL + storedUrl);
-            else {
-              throw new Error(`Invalid image Url. ${url}. Found in Sno: ${record.sno}`);
-            }
-          }
+        //   for (const url of imageUrls) {
+        //     let storedUrl = (await downloadAndCompressImage(reqId, url, uploadDir));
+        //     if (storedUrl) storedUrls.push(process.env.SERVICE_URL + storedUrl);
+        //     else {
+        //       throw new Error(`Invalid image Url. ${url}. Found in Sno: ${record.sno}`);
+        //     }
+        //   }
 
-          record.compressedImages = storedUrls.join(",");
-        }
+        //   record.compressedImages = storedUrls.join(",");
+        // }
 
-        console.log(results);
+        // console.log(results);
         
         await CsvRecord.bulkCreate(results);
-        res.json({ requestId: reqId,  message: "File processed successfully and data stored in DB" });
+
+        // Process images asynchronously
+        processImages(reqId);
+
+        res.json({ requestId: reqId,  message: "Request generated. Images are being processed." });
       } catch (err) {
         console.log(err);
         

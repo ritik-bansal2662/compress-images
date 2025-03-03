@@ -23,8 +23,10 @@ exports.getCSVStatus = async (req, res) => {
 
     const filePath = path.join(__dirname, "../uploads/status_" + requestId + ".csv");
     fs.writeFileSync(filePath, csvData);
+    
+    const fileName = `${requestId}_status.csv`;
 
-    res.download(filePath, "status.csv", () => fs.unlinkSync(filePath));
+    res.download(filePath, fileName, () => fs.unlinkSync(filePath));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

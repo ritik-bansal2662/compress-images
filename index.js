@@ -1,9 +1,13 @@
 require('dotenv').config()
+
+process.env.TZ = "Asia/Kolkata";
+
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
 const csvController = require("./controllers/csvController");
 const csvStatusController = require("./controllers/csvStatusController");
+const webhookController = require("./controllers/webhookController");
 const { sequelize } = require("./config/db");
 
 // console.log('env: ', process.env)
@@ -11,6 +15,7 @@ const { sequelize } = require("./config/db");
 const app = express();
 const port = 3000;
 
+app.use(express.json());
 // Sync database
 sequelize.sync().then(() => console.log("Database synced"));
 
@@ -25,6 +30,10 @@ app.post("/upload", upload.single("file"), csvController.uploadCSV);
 
 // API to download CSV status based on request ID
 app.get("/status", csvStatusController.getCSVStatus);
+
+
+// Webhook endpoint
+app.post("/webhook", webhookController.handleWebhook);
 
 
 app.listen(port, () => {
