@@ -45,6 +45,7 @@ const port = 3000;
 // app.use("/uploads", express.static(path.join(__dirname, "/tmp/uploads")));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => res.json({
   "status":"ok",
