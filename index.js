@@ -15,8 +15,14 @@ const { sequelize } = require("./config/db");
 // console.log('env: ', process.env)
 
 const app = express();
-app.options('*', cors());
 app.use(cors());
+app.use(
+  cors({
+    origin: "*", // Allow all origins (IPs)
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"], // Allow all methods
+    allowedHeaders: ["*"], // Allow all headers
+  })
+);
 app.use(express.json());
 // Sync database
 sequelize.sync().then(() => console.log("Database synced"));
