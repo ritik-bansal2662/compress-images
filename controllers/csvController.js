@@ -22,6 +22,7 @@ const validateCsv = (data) => {
 }
 
 exports.uploadCSV = async (req, res) => {
+  console.log(req.file)
   if (!req.file) return res.status(400).json({ error: "No file uploaded" });
   const reqId = await getRequestId();
   console.log('reqId: ', reqId);
@@ -29,7 +30,6 @@ exports.uploadCSV = async (req, res) => {
   // const uploadDir = path.join(__dirname, "../tmp/uploads");
   // if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
-  console.log(req.file)
 
   const results = [];
   let isFirstRow = true;
