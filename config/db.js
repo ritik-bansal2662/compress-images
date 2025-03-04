@@ -1,4 +1,5 @@
 const { Sequelize } = require("sequelize");
+const fs = require("fs");
 
 const dbHost = process.env.DB_HOST
 const dbPort = process.env.DB_PORT
@@ -24,7 +25,13 @@ const sequelize = new Sequelize({
   password: dbPassword,
   dialect: "mysql",
   logging: false,
-  dialectModule: require('mysql2')
+  dialectModule: require('mysql2'),
+  dialectOptions: {
+    ssl: {
+      rejectUnauthorized: true, // Ensures SSL verification
+      ca: process.env.DB_SSL_CA ? fs.readFileSync(process.env.DB_SSL_CA) : undefined,
+    },
+  },
 });
 
 sequelize.authenticate()
