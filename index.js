@@ -54,7 +54,16 @@ app.get("/", (req, res) => res.json({
 }));
 
 // API to upload CSV file
-app.post("/upload", upload.single("file"), csvController.uploadCSV);
+app.post(
+    "/upload", 
+    (req, res, next) => {
+        console.log("Request Headers:", req.headers);
+        console.log("Request Body:", req.body);
+        next();
+    }, 
+    upload.single("file"), 
+    csvController.uploadCSV
+);
 
 // API to download CSV status based on request ID
 app.get("/status", csvStatusController.getCSVStatus);
