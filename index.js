@@ -9,6 +9,7 @@ const csvController = require("./controllers/csvController");
 const csvStatusController = require("./controllers/csvStatusController");
 const webhookController = require("./controllers/webhookController");
 const { sequelize } = require("./config/db");
+// const fileUpload = require("express-fileupload")
 
 // console.log('env: ', process.env)
 
@@ -20,8 +21,12 @@ app.use(express.json());
 sequelize.sync().then(() => console.log("Database synced"));
 
 
+// app.use(fileUpload({
+//   useTempFiles: true
+// }))
+
 // Serve static files from the 'uploads' directory
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "/tmp/uploads")));
 
 // Configure Multer for file upload
 const upload = multer({ dest: "uploads/" });

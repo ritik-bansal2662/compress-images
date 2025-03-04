@@ -21,7 +21,7 @@ exports.getCSVStatus = async (req, res) => {
     });
     const csvData = json2csvParser.parse(records);
 
-    const filePath = path.join(__dirname, "../uploads/status_" + requestId + ".csv");
+    const filePath = path.join(__dirname, "../tmp/uploads/status_" + requestId + ".csv");
     fs.writeFileSync(filePath, csvData);
     
     const fileName = `${requestId}_status.csv`;

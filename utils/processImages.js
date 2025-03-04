@@ -3,20 +3,39 @@ const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs");
 const CsvRecord = require("../models/CsvRecord");
+const streamifier = require("streamifier");
+const cloudinary = require("../config/cloudinaryConfig");
+
+
+
 
 const downloadAndCompressImage = async (imageUrl, outputFolder) => {
   try {
     const response = await axios({ url: imageUrl, responseType: "arraybuffer" });
     const imageBuffer = Buffer.from(response.data);
-    const imageName = path.basename(imageUrl).split("?")[0]; // Remove query params
-    const outputFilePath = path.join(outputFolder, imageName);
+    // const imageName = path.basename(imageUrl).split("?")[0]; // Remove query params
+    // const outputFilePath = path.join(outputFolder, imageName);
+    let outputFilePath = ''
+    const compressedImage = await sharp(imageBuffer).resize({ width: Math.round(0.5 * 800) }).toBuffer();
 
-    await sharp(imageBuffer).resize({ width: Math.round(0.5 * 800) }).toFile(outputFilePath);
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream({ folder: "compressed_images" }, async (error, result) => {
+        if (error) {
+          console.error("Cloudinary upload error:", error);
+          return;
+        }
 
-    return `/uploads/${imageName}`;
+        resolve(result.secure_url);
+      });
+      streamifier.createReadStream(compressedImage).pipe(uploadStream);
+    })
+
+
+    // return outputFilePath
+    // return `/uploads/${imageName}`;
   } catch (error) {
     console.error("Error processing image:", imageUrl);
-    return null;
+    return null
   }
 };
 
@@ -46,7 +65,7 @@ exports.processImages = async (reqId) => {
     let correctImgCount = 0;
     let falseImgCnt = 0;
 
-    const uploadDir = path.join(__dirname, "../uploads");
+    const uploadDir = path.join(__dirname, "../tmp/uploads");
     if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
     for (const record of records) {
@@ -55,9 +74,13 @@ exports.processImages = async (reqId) => {
 
       for (const url of imageUrls) {
         const storedUrl = await downloadAndCompressImage(url, uploadDir);
+
+        console.log('storedUrl: ', storedUrl);
+        
         if (storedUrl) {
             correctImgCount++;
-            storedUrls.push(process.env.SERVICE_URL + storedUrl);
+            // storedUrls.push(process.env.SERVICE_URL + storedUrl);
+            storedUrls.push(storedUrl);
         } else {
             falseImgCnt++;
         }

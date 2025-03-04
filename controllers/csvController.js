@@ -25,7 +25,7 @@ exports.uploadCSV = async (req, res) => {
   const reqId = await getRequestId();
   console.log('reqId: ', reqId);
   
-  const uploadDir = path.join(__dirname, "../uploads");
+  const uploadDir = path.join(__dirname, "../tmp/uploads");
   if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
   console.log(req.file)
