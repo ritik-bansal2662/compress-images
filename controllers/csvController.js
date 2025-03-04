@@ -6,6 +6,7 @@ const path = require("path");
 const CsvRecord = require("../models/CsvRecord");
 const ReqMaster = require("../models/RequestMaster");
 const { processImages } = require("../utils/processImages");
+const { Readable } = require("stream");
 
 const getRequestId = async () => {
   const id = Date.now();
@@ -32,7 +33,9 @@ exports.uploadCSV = async (req, res) => {
 
   const results = [];
   let isFirstRow = true;
-  fs.createReadStream(req.file.path)
+  const stream = Readable.from(req.file.buffer.toString());
+
+  stream
     .pipe(csv({ headers: true, skipEmptyLines: true }))
     .on("data", (data) => {
       console.log(data);
@@ -83,6 +86,6 @@ exports.uploadCSV = async (req, res) => {
         
         res.status(500).json({requestId: reqId, error: err.message });
       }
-      fs.unlinkSync(req.file.path);
+      // fs.unlinkSync(req.file.path);
     });
 };

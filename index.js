@@ -37,7 +37,10 @@ const port = 3000;
 // app.use("/uploads", express.static(path.join(__dirname, "/tmp/uploads")));
 
 // Configure Multer for file upload
-const upload = multer({ dest: "/tmp/" });
+// const upload = multer({ dest: "/tmp/" });
+
+const storage = multer.memoryStorage(); // Store in memory (required for Vercel)
+const upload = multer({ storage });
 
 app.get("/", (req, res) => res.json({
   "status":"ok",
