@@ -9,7 +9,7 @@ const cloudinary = require("../config/cloudinaryConfig");
 
 
 
-const downloadAndCompressImage = async (imageUrl, outputFolder) => {
+const downloadAndCompressImage = async (imageUrl) => {
   try {
     const response = await axios({ url: imageUrl, responseType: "arraybuffer" });
     const imageBuffer = Buffer.from(response.data);
@@ -65,15 +65,15 @@ exports.processImages = async (reqId) => {
     let correctImgCount = 0;
     let falseImgCnt = 0;
 
-    const uploadDir = path.join(__dirname, "../tmp/uploads");
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
+    // const uploadDir = path.join(__dirname, "../tmp/uploads");
+    // if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
     for (const record of records) {
       const imageUrls = record.images.split(",").map((url) => url.trim());
       const storedUrls = [];
 
       for (const url of imageUrls) {
-        const storedUrl = await downloadAndCompressImage(url, uploadDir);
+        const storedUrl = await downloadAndCompressImage(url);
 
         console.log('storedUrl: ', storedUrl);
         
