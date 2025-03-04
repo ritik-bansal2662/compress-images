@@ -23,7 +23,8 @@ const validateCsv = (data) => {
 
 exports.uploadCSV = async (req, res) => {
   console.log('req file: ', req.file)
-  if (!req.file) return res.status(400).json({ request: req,  error: "No file uploaded" });
+  console.log('req: ', req)
+  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
   const reqId = await getRequestId();
   console.log('reqId: ', reqId);
   
