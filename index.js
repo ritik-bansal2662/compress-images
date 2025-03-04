@@ -29,7 +29,7 @@ sequelize.sync().then(() => console.log("Database synced"));
 // app.use("/uploads", express.static(path.join(__dirname, "/tmp/uploads")));
 
 // Configure Multer for file upload
-const upload = multer({ dest: "tmp/" });
+const upload = multer({ dest: "/tmp/" });
 
 app.get("/", (req, res) => res.json({
   "status":"ok",
