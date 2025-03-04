@@ -26,7 +26,7 @@ sequelize.sync().then(() => console.log("Database synced"));
 // }))
 
 // Serve static files from the 'uploads' directory
-app.use("/uploads", express.static(path.join(__dirname, "/tmp/uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "/tmp/uploads")));
 
 // Configure Multer for file upload
 const upload = multer({ dest: "uploads/" });
