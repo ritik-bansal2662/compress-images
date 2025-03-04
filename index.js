@@ -23,7 +23,6 @@ app.use(
     allowedHeaders: ["*"], // Allow all headers
   })
 );
-app.use(express.json());
 // Sync database
 sequelize.sync().then(() => console.log("Database synced"));
 const port = 3000;
@@ -41,6 +40,8 @@ const port = 3000;
 
 const storage = multer.memoryStorage(); // Store in memory (required for Vercel)
 const upload = multer({ storage });
+
+app.use(express.json());
 
 app.get("/", (req, res) => res.json({
   "status":"ok",
