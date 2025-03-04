@@ -29,7 +29,7 @@ const sequelize = new Sequelize({
   dialectOptions: {
     ssl: {
       rejectUnauthorized: true, // Ensures SSL verification
-      ca: process.env.DB_SSL_CA ? fs.readFileSync(process.env.DB_SSL_CA) : undefined,
+      ca: process.env.DB_SSL_CA.replace(/\\n/g, "\n"),
     },
   },
 });
