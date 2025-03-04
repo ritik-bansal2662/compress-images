@@ -3,6 +3,7 @@ require('dotenv').config()
 process.env.TZ = "Asia/Kolkata";
 
 const express = require("express");
+const cors = require('cors');
 const multer = require("multer");
 const path = require("path");
 const csvController = require("./controllers/csvController");
@@ -14,11 +15,12 @@ const { sequelize } = require("./config/db");
 // console.log('env: ', process.env)
 
 const app = express();
-const port = 3000;
-
+app.options('*', cors());
+app.use(cors());
 app.use(express.json());
 // Sync database
 sequelize.sync().then(() => console.log("Database synced"));
+const port = 3000;
 
 
 // app.use(fileUpload({
